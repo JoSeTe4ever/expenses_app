@@ -1,6 +1,21 @@
 import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
 
+final DateFormat formatter = DateFormat('yyyy-MM-dd');
 const uuid = Uuid();
+
+const categoryIcons = {
+  Category.food: '🍔',
+  Category.transportation: '🚗',
+  Category.shopping: '🛍️',
+  Category.housing: '🏠',
+  Category.entertainment: '🎉',
+  Category.utilities: '💡',
+  Category.insurance: '🛡️',
+  Category.medical: '🩺',
+  Category.savings: '💰',
+  Category.other: '📦',
+};
 
 enum Category {
   food,
@@ -28,4 +43,8 @@ class Expense {
       required this.date,
       required this.category})
       : id = uuid.v4();
+
+  String get formattedDate {
+    return formatter.format(date);
+  }
 }

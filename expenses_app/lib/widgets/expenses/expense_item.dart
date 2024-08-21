@@ -18,6 +18,16 @@ class ExpenseItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(expense.amount.toStringAsFixed(2)),
+              const Spacer(), // esto para ocupar todo el espacio
+              Row(
+                children: [
+                  Text(
+                    categoryIcons[expense.category]!,
+                    textScaler: const TextScaler.linear(1.8),
+                  ),
+                  Text(expense.formattedDate),
+                ],
+              )
             ],
           ),
         ]),
