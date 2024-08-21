@@ -1,3 +1,4 @@
+import 'package:expenses_app/models/expense.dart';
 import 'package:flutter/material.dart';
 
 class NewExpense extends StatefulWidget {
@@ -11,6 +12,23 @@ class _NewExpenseState extends State<NewExpense> {
   var _expenseTitle = '';
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
+  DateTime? _selectedDate;
+
+  void _presentDatePicker() {
+    final now = DateTime.now();
+    final firstDate = DateTime(now.year - 1, now.month, now.day);
+    final lastDate;
+    showDatePicker(
+            context: context,
+            initialDate: now,
+            firstDate: firstDate,
+            lastDate: now)
+        .then((value) {
+      setState(() {
+        _selectedDate = value;
+      });
+    });
+  }
 
   //create dispose method
   @override
@@ -38,16 +56,25 @@ class _NewExpenseState extends State<NewExpense> {
           ),
           Row(
             children: [
-              TextField(
-                decoration:
-                    const InputDecoration(labelText: 'Amount', prefixText: '€'),
-                keyboardType: TextInputType.number,
-                controller: _amountController,
+              Expanded(
+                child: TextField(
+                  decoration: const InputDecoration(
+                      labelText: 'Amount', prefixText: '€'),
+                  keyboardType: TextInputType.number,
+                  controller: _amountController,
+                ),
               ),
               SizedBox(width: 16),
               Expanded(
                 child: Row(
-                  children: [],
+                  children: [
+                    Text(_selectedDate == null ? 'No date selected': formatter.format(_selectedDate!)),
+                    IconButton(
+                        onPressed: () {
+                          _presentDatePicker();
+                        },
+                        icon: const Icon(Icons.calendar_month))
+                  ],
                 ),
               ),
             ],
