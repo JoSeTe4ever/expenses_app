@@ -73,6 +73,7 @@ class _NewExpenseState extends State<NewExpense> {
         category: _selectedCategory);
 
     Navigator.of(context).pop();
+    
   }
 
   @override
