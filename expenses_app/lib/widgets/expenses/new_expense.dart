@@ -12,12 +12,24 @@ class _NewExpenseState extends State<NewExpense> {
   var _expenseTitle = '';
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
+
+  //dropDown no tiene la habilidad de poner controller :(
+  Category _selectedCategory = Category.other;
+
   DateTime? _selectedDate;
+
+  //create dispose method
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
 
   void _presentDatePicker() {
     final now = DateTime.now();
     final firstDate = DateTime(now.year - 1, now.month, now.day);
     final lastDate;
+
     showDatePicker(
             context: context,
             initialDate: now,
@@ -30,16 +42,37 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
-  //create dispose method
-  @override
-  void dispose() {
-    _titleController.dispose();
-    super.dispose();
-  }
-
   void _saveTitle(String value) {
     print(value);
     _expenseTitle = value;
+  }
+
+  void _submitExpenseData() {
+    final enteredTitle = _titleController.text;
+    final enteredAmount = double.parse(_amountController.text);
+
+    if (enteredTitle.isEmpty || enteredAmount <= 0 || _selectedDate == null) {
+      // show error message
+      showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+                title: const Text('Invalid input'),
+                content: const Text('Please enter a valid title and amount'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: const Text('Okay'))
+                ],
+              ));
+    }
+
+    final newExpense = Expense(
+        title: enteredTitle,
+        amount: enteredAmount,
+        date: _selectedDate!,
+        category: _selectedCategory);
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -68,7 +101,9 @@ class _NewExpenseState extends State<NewExpense> {
               Expanded(
                 child: Row(
                   children: [
-                    Text(_selectedDate == null ? 'No date selected': formatter.format(_selectedDate!)),
+                    Text(_selectedDate == null
+                        ? 'No date selected'
+                        : formatter.format(_selectedDate!)),
                     IconButton(
                         onPressed: () {
                           _presentDatePicker();
@@ -79,16 +114,27 @@ class _NewExpenseState extends State<NewExpense> {
               ),
             ],
           ),
-          TextField(
-            decoration: const InputDecoration(labelText: 'Category'),
-          ),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              DropdownButton(
+                  value: _selectedCategory as Category,
+                  items: List.of(Category.values.map((e) => DropdownMenuItem(
+                      value: e,
+                      child:
+                          Text(e.toString().toUpperCase().split('.').last)))),
+                  onChanged: (value) {
+                    print(value);
+                    setState(() {
+                      _selectedCategory = value as Category;
+                    });
+                  }),
+              Spacer(flex: 1),
               ElevatedButton(
                 onPressed: () {
                   print(_titleController.text);
-                  Navigator.of(context).pop();
+                  _submitExpenseData();
                 },
                 child: const Text('Save'),
               ),
