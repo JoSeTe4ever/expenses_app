@@ -77,7 +77,6 @@ class _NewExpenseState extends State<NewExpense> {
 
     widget.onAddExpense(newExpense);
     Navigator.of(context).pop();
-
   }
 
   @override

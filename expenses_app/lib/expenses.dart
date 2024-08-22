@@ -33,6 +33,7 @@ class _ExpensesState extends State<Expenses> {
 
   void _openExpenseOverlay() {
     showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         builder: (context) {
           return NewExpense(
@@ -44,6 +45,12 @@ class _ExpensesState extends State<Expenses> {
   void _addExpense(Expense expense) {
     setState(() {
       _expenses.add(expense);
+    });
+  }
+
+  void _removeExpense(Expense expense) {
+    setState(() {
+      _expenses.remove(expense);
     });
   }
 
@@ -68,7 +75,7 @@ class _ExpensesState extends State<Expenses> {
         ),
       ),
       body: Center(
-        child: ExpensesList(expenses: _expenses),
+        child: ExpensesList(expenses: _expenses, onRemoveExpense: _removeExpense),
       ),
     );
   }
