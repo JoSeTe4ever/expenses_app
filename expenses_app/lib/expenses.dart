@@ -13,6 +13,9 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
+
+  Widget mainContent = const Text('No hay gastos');
+
   final List<Expense> _expenses = [
     Expense(
         title: 'Gasto 1',
@@ -52,10 +55,32 @@ class _ExpensesState extends State<Expenses> {
     setState(() {
       _expenses.remove(expense);
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Gasto eliminado'),
+        action: SnackBarAction(
+          label: 'Deshacer',
+          onPressed: () {
+            setState(() {
+              _expenses.add(expense);
+            });
+          },
+        ),
+      ),
+    );
+
   }
 
   @override
   Widget build(BuildContext context) {
+
+    if(_expenses.isEmpty){
+      mainContent = const Text('No hay gastos');
+    } else {
+      mainContent = ExpensesList(expenses: _expenses, onRemoveExpense: _removeExpense);
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -75,7 +100,7 @@ class _ExpensesState extends State<Expenses> {
         ),
       ),
       body: Center(
-        child: ExpensesList(expenses: _expenses, onRemoveExpense: _removeExpense),
+        child: mainContent,
       ),
     );
   }
